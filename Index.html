@@ -1,1 +1,914 @@
+<!DOCTYPE html>
 
+‏<html lang="en">
+‏<head>
+‏<meta charset="UTF-8">
+‏<meta name="viewport" content="width=device-width, initial-scale=1.0">
+‏<title>HistoSlide Exam</title>
+‏<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+‏<style>
+‏:root{
+‏  --bg:#04080d;--surface:#080f18;--panel:#0c1822;
+‏  --b1:#152234;--b2:#1e3347;
+‏  --teal:#00d4ff;--teal2:#0099bb;
+‏  --green:#00ff88;--red:#ff2d55;
+‏  --yellow:#ffc000;--orange:#ff7a30;
+‏  --text:#b8cfe0;--muted:#3a566e;--muted2:#567080;
+‏  --white:#eef4fa;
+‏  --gt:0 0 36px #00d4ff30;--gg:0 0 36px #00ff8830;--gr:0 0 36px #ff2d5530;
+}
+‏*{margin:0;padding:0;box-sizing:border-box;}
+‏body{
+‏  background:var(--bg);color:var(--text);
+‏  font-family:'Syne',sans-serif;
+‏  min-height:100vh;display:flex;justify-content:center;
+‏  overflow-x:hidden;
+}
+‏body::before{
+‏  content:'';position:fixed;inset:0;
+‏  background-image:linear-gradient(#152234 1px,transparent 1px),linear-gradient(90deg,#152234 1px,transparent 1px);
+‏  background-size:52px 52px;opacity:.18;pointer-events:none;z-index:0;
+}
+‏body::after{
+‏  content:'';position:fixed;inset:0;
+‏  background:radial-gradient(ellipse 80% 60% at 15% 0%,#002c4033 0%,transparent 55%),
+‏             radial-gradient(ellipse 60% 70% at 88% 100%,#001a2a22 0%,transparent 55%);
+‏  pointer-events:none;z-index:0;
+}
+‏.wrap{position:relative;z-index:1;width:100%;max-width:680px;padding:0 18px 80px;}
+
+‏/* ── screens ── */
+‏.scr{display:none;}
+‏.scr.on{display:block;}
+
+‏/* ── topbar ── */
+‏.topbar{
+‏display:flex;align-items:center;justify-content:space-between;
+‏padding:22px 0 28px;
+‏border-bottom:1px solid var(–b1);margin-bottom:32px;
+}
+‏.logo{font-family:‘JetBrains Mono’,monospace;font-size:11px;letter-spacing:4px;color:var(–teal);opacity:.7;}
+‏.dot{width:7px;height:7px;border-radius:50%;background:var(–teal);box-shadow:0 0 10px var(–teal);animation:blink 2s ease-in-out infinite;}
+‏@keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+‏/* ═══════════════ HOME ═══════════════ */
+‏.hero{text-align:center;padding:36px 0 44px;}
+‏.hero-badge{
+‏display:inline-block;font-family:‘JetBrains Mono’,monospace;font-size:10px;
+‏letter-spacing:3px;color:var(–teal);background:#00d4ff0d;border:1px solid #00d4ff20;
+‏padding:5px 16px;border-radius:99px;margin-bottom:22px;
+}
+‏.hero-h1{font-size:clamp(34px,7vw,56px);font-weight:800;color:var(–white);line-height:1.08;letter-spacing:-1.5px;margin-bottom:10px;}
+‏.hero-h1 span{color:var(–teal);}
+‏.hero-sub{font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–muted2);letter-spacing:2px;margin-bottom:38px;}
+
+‏.name-wrap{max-width:420px;margin:0 auto 30px;}
+‏.name-input{
+‏width:100%;background:var(–panel);border:1px solid var(–b2);border-radius:12px;
+‏padding:15px 20px;font-size:16px;font-family:‘Syne’,sans-serif;color:var(–white);
+‏outline:none;transition:border-color .2s,box-shadow .2s;
+}
+‏.name-input::placeholder{color:var(–muted);}
+‏.name-input:focus{border-color:var(–teal);box-shadow:0 0 0 3px #00d4ff12;}
+‏.name-input.err{border-color:var(–red);}
+
+‏/* mode cards */
+‏.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:560px;margin:0 auto 30px;}
+‏.card{
+‏background:var(–panel);border:1px solid var(–b2);border-radius:16px;
+‏padding:26px 20px;cursor:pointer;transition:all .25s;text-align:left;
+‏position:relative;overflow:hidden;
+}
+‏.card::after{
+‏content:’’;position:absolute;top:0;left:0;right:0;height:2px;
+‏background:linear-gradient(90deg,transparent,var(–ac),transparent);
+‏opacity:0;transition:opacity .25s;
+}
+‏.card:hover::after{opacity:1;}
+‏.card.cq{–ac:var(–teal);}
+‏.card.cf{–ac:var(–orange);}
+‏.card:hover{transform:translateY(-3px);border-color:var(–ac);}
+‏.card.cq:hover{box-shadow:0 14px 40px #00d4ff16;}
+‏.card.cf:hover{box-shadow:0 14px 40px #ff7a3016;}
+‏.card-ico{font-size:26px;margin-bottom:14px;}
+‏.card-name{font-size:18px;font-weight:700;color:var(–white);margin-bottom:6px;}
+‏.card-desc{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted2);line-height:1.8;}
+‏.card-tag{
+‏display:inline-block;font-family:‘JetBrains Mono’,monospace;font-size:10px;
+‏padding:3px 10px;border-radius:99px;margin-top:12px;
+}
+‏.cq .card-tag{color:var(–teal);background:#00d4ff0d;border:1px solid #00d4ff22;}
+‏.cf .card-tag{color:var(–orange);background:#ff7a300d;border:1px solid #ff7a3022;}
+
+‏/* upload box */
+‏.upload-box{
+‏max-width:560px;margin:0 auto;
+‏background:var(–panel);border:1px dashed var(–b2);border-radius:12px;
+‏padding:20px;transition:border-color .2s;
+}
+‏.upload-box:hover{border-color:var(–muted2);}
+‏.ul-title{font-family:‘JetBrains Mono’,monospace;font-size:10px;letter-spacing:3px;color:var(–muted2);margin-bottom:10px;}
+‏.ul-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+‏.ul-btn{
+‏background:var(–b2);color:var(–text);border:none;border-radius:8px;
+‏padding:9px 16px;font-size:13px;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;
+}
+‏.ul-btn:hover{background:var(–muted);color:var(–white);}
+‏.ul-status{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted2);}
+‏.ul-status.ok{color:var(–green);}
+‏#fInput{display:none;}
+
+‏/* ═══════════════ EXAM ═══════════════ */
+‏.exam-bar{
+‏display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;
+}
+‏.emeta{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted2);}
+‏.emeta b{color:var(–white);font-size:14px;}
+‏.eright{display:flex;align-items:center;gap:14px;}
+
+‏/* timer ring */
+‏.tring{position:relative;width:68px;height:68px;flex-shrink:0;}
+‏.tsvg{transform:rotate(-90deg);}
+‏.tbg{fill:none;stroke:var(–b1);stroke-width:5;}
+‏.tarc{fill:none;stroke-width:5;stroke-linecap:round;stroke:var(–teal);transition:stroke-dashoffset 1s linear,stroke .4s;}
+‏.tnum{
+‏position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+‏font-family:‘JetBrains Mono’,monospace;font-weight:700;font-size:13px;color:var(–white);
+}
+
+‏/* progress bar */
+‏.ptrack{width:100%;height:2px;background:var(–b1);border-radius:99px;margin-bottom:18px;overflow:hidden;}
+‏.pfill{height:100%;background:linear-gradient(90deg,var(–teal2),var(–teal));border-radius:99px;box-shadow:0 0 8px var(–teal);transition:width .5s ease;}
+
+‏/* slide frame */
+‏.sframe{
+‏width:100%;border-radius:16px;border:1px solid var(–b2);background:var(–surface);
+‏overflow:hidden;margin-bottom:16px;position:relative;
+}
+‏.simg-wrap{width:100%;aspect-ratio:4/3;position:relative;overflow:hidden;}
+‏.simg{width:100%;height:100%;object-fit:cover;display:block;}
+‏.sph{
+‏width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+‏gap:12px;background:radial-gradient(ellipse at center,#0d1921,#04080d);
+}
+‏.sph-ico{width:56px;height:56px;border-radius:50%;border:1px solid var(–b2);display:flex;align-items:center;justify-content:center;opacity:.35;}
+‏.sph p{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted);letter-spacing:2px;}
+‏.sbadge{
+‏position:absolute;font-family:‘JetBrains Mono’,monospace;font-size:9px;
+‏letter-spacing:2px;color:var(–teal);opacity:.5;background:#04080daa;padding:3px 8px;border-radius:4px;
+}
+‏.sbadge.tl{top:10px;left:10px;} .sbadge.tr{top:10px;right:10px;}
+
+‏/* answer area */
+‏.alabel{font-family:‘JetBrains Mono’,monospace;font-size:10px;letter-spacing:3px;color:var(–muted2);margin-bottom:8px;display:block;}
+‏.arow{display:flex;gap:10px;margin-bottom:10px;}
+‏.ainput{
+‏flex:1;background:var(–panel);border:1px solid var(–b2);border-radius:10px;
+‏padding:14px 18px;font-size:17px;font-family:‘Syne’,sans-serif;color:var(–white);
+‏outline:none;transition:border-color .2s,box-shadow .2s;
+}
+‏.ainput::placeholder{color:var(–muted);}
+‏.ainput:focus{border-color:var(–teal);box-shadow:0 0 0 3px #00d4ff10;}
+‏.ainput.cf{border-color:var(–green);box-shadow:0 0 0 3px #00ff8818;}
+‏.ainput.wf{border-color:var(–red);box-shadow:0 0 0 3px #ff2d5518;}
+‏.bsub{
+‏background:var(–teal);color:#000;border:none;border-radius:10px;padding:0 20px;
+‏font-size:15px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+‏.bsub:hover{background:var(–white);transform:translateY(-1px);box-shadow:var(–gt);}
+‏.bskip{
+‏width:100%;background:transparent;color:var(–muted2);border:1px solid var(–b1);
+‏border-radius:10px;padding:11px;font-size:14px;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;
+}
+‏.bskip:hover{border-color:var(–red);color:var(–red);}
+
+‏/* ═══════════════ INFO OVERLAY ═══════════════ */
+‏.ioverlay{
+‏position:fixed;inset:0;background:#04080df0;z-index:100;
+‏display:flex;align-items:flex-end;justify-content:center;
+‏opacity:0;pointer-events:none;transition:opacity .25s;
+}
+‏.ioverlay.on{opacity:1;pointer-events:all;}
+‏.ipanel{
+‏width:100%;max-width:680px;background:var(–panel);border:1px solid var(–b2);
+‏border-radius:22px 22px 0 0;padding:28px 22px 40px;
+‏transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+‏max-height:88vh;overflow-y:auto;
+}
+‏.ipanel::-webkit-scrollbar{width:3px;}
+‏.ipanel::-webkit-scrollbar-thumb{background:var(–b2);}
+‏.ioverlay.on .ipanel{transform:translateY(0);}
+
+‏.ibadge{
+‏display:inline-flex;align-items:center;gap:6px;font-family:‘JetBrains Mono’,monospace;
+‏font-size:11px;letter-spacing:2px;padding:5px 14px;border-radius:99px;margin-bottom:14px;
+}
+‏.ibadge.ic{color:var(–green);background:#00ff8810;border:1px solid #00ff8830;}
+‏.ibadge.iw{color:var(–red);background:#ff2d5510;border:1px solid #ff2d5530;}
+‏.ibadge.is{color:var(–muted2);background:#ffffff08;border:1px solid var(–b1);}
+‏.iname{font-size:26px;font-weight:800;color:var(–white);margin-bottom:4px;}
+‏.ians{font-family:‘JetBrains Mono’,monospace;font-size:12px;padding:8px 12px;border-radius:8px;margin-bottom:18px;line-height:1.6;}
+‏.ians.ic{color:var(–green);background:#00ff8808;}
+‏.ians.iw{color:var(–red);background:#ff2d5508;}
+‏.ians.is{color:var(–muted2);}
+
+‏.iimgw{width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:18px;border:1px solid var(–b1);}
+‏.iimgw img{width:100%;height:100%;object-fit:cover;display:block;}
+‏.inoph{width:100%;height:100%;background:var(–surface);display:flex;align-items:center;justify-content:center;
+‏font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted);letter-spacing:2px;}
+
+‏.isec{margin-bottom:16px;}
+‏.isec-t{font-family:‘JetBrains Mono’,monospace;font-size:9px;letter-spacing:3px;color:var(–teal);margin-bottom:7px;}
+‏.isec-body{font-size:14px;color:var(–text);line-height:1.75;}
+‏.ichips{display:flex;flex-wrap:wrap;gap:7px;}
+‏.ichip{font-family:‘JetBrains Mono’,monospace;font-size:11px;background:var(–surface);border:1px solid var(–b2);border-radius:6px;padding:4px 12px;color:var(–text);}
+
+‏.bcontinue{
+‏width:100%;background:var(–teal);color:#000;border:none;border-radius:12px;
+‏padding:16px;font-size:17px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;margin-top:6px;
+}
+‏.bcontinue:hover{background:var(–white);box-shadow:var(–gt);}
+
+‏/* ═══════════════ RESULTS ═══════════════ */
+‏.rhero{text-align:center;padding:28px 0 20px;}
+‏.rname{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–muted2);letter-spacing:2px;margin-bottom:6px;}
+‏.rmodetag{display:inline-block;font-family:‘JetBrains Mono’,monospace;font-size:10px;padding:4px 14px;border-radius:99px;margin-bottom:22px;}
+
+‏.sring{position:relative;width:158px;height:158px;margin:0 auto 18px;}
+‏.srsvg{transform:rotate(-90deg);}
+‏.srbg{fill:none;stroke:var(–b1);stroke-width:10;}
+‏.srarc{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1);}
+‏.srlabel{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+‏.srbig{font-family:‘JetBrains Mono’,monospace;font-size:34px;font-weight:700;color:var(–white);}
+‏.srpct{font-family:‘JetBrains Mono’,monospace;font-size:13px;color:var(–muted2);}
+‏.gpill{display:inline-block;font-size:20px;font-weight:800;letter-spacing:2px;padding:9px 30px;border-radius:99px;margin-bottom:28px;}
+
+‏.rgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+‏.rstat{background:var(–panel);border:1px solid var(–b1);border-radius:12px;padding:16px;text-align:center;}
+‏.rsn{font-family:‘JetBrains Mono’,monospace;font-size:28px;font-weight:700;margin-bottom:4px;}
+‏.rsl{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–muted2);letter-spacing:2px;}
+
+‏.alog{max-height:310px;overflow-y:auto;margin-bottom:26px;display:flex;flex-direction:column;gap:8px;}
+‏.alog::-webkit-scrollbar{width:3px;}
+‏.alog::-webkit-scrollbar-thumb{background:var(–b2);}
+‏.logitem{
+‏background:var(–panel);border:1px solid var(–b1);border-left:2px solid transparent;
+‏border-radius:10px;padding:12px 15px;display:flex;gap:10px;align-items:flex-start;
+}
+‏.logitem.lc{border-left-color:var(–green);}
+‏.logitem.lw{border-left-color:var(–red);}
+‏.logitem.ls{opacity:.5;}
+‏.lnum{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–muted);padding-top:2px;min-width:22px;}
+‏.linfo{flex:1;}
+‏.lcname{font-size:14px;font-weight:700;color:var(–white);margin-bottom:3px;}
+‏.luser{font-family:‘JetBrains Mono’,monospace;font-size:11px;}
+‏.lc .luser{color:var(–green);} .lw .luser{color:var(–red);} .ls .luser{color:var(–muted2);}
+
+‏.rbtns{display:flex;gap:12px;}
+‏.bhome{flex:1;background:transparent;color:var(–teal);border:1px solid var(–teal);border-radius:10px;padding:15px;font-size:15px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;}
+‏.bhome:hover{background:var(–teal);color:#000;box-shadow:var(–gt);}
+‏.bagain{flex:1;background:var(–teal);color:#000;border:none;border-radius:10px;padding:15px;font-size:15px;font-weight:700;font-family:‘Syne’,sans-serif;cursor:pointer;transition:all .2s;}
+‏.bagain:hover{background:var(–white);box-shadow:var(–gt);transform:translateY(-1px);}
+
+‏/* toast */
+‏.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);padding:9px 22px;border-radius:99px;
+‏font-family:‘JetBrains Mono’,monospace;font-size:13px;font-weight:700;letter-spacing:1px;
+‏opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;white-space:nowrap;}
+‏.toast.on{opacity:1;}
+‏.toast.tok{background:#00ff8820;border:1px solid #00ff8855;color:var(–green);}
+‏.toast.tno{background:#ff2d5520;border:1px solid #ff2d5555;color:var(–red);}
+‏.toast.tsk{background:#ffffff0a;border:1px solid var(–b2);color:var(–muted2);}
+‏</style>
+
+‏</head>
+‏<body>
+
+‏<div class="toast" id="toast"></div>
+
+‏<!-- INFO OVERLAY -->
+
+‏<div class="ioverlay" id="iOverlay">
+‏  <div class="ipanel" id="iPanel">
+‏    <div class="ibadge" id="iBadge"></div>
+‏    <div class="iname" id="iName"></div>
+‏    <div class="ians" id="iAns"></div>
+‏    <div class="iimgw" id="iImgW"></div>
+‏    <div class="isec">
+‏      <div class="isec-t">🔬 KEY IDENTIFYING FEATURES</div>
+‏      <div class="isec-body" id="iFeatures"></div>
+‏    </div>
+‏    <div class="isec">
+‏      <div class="isec-t">📍 LOCATION / WHERE FOUND</div>
+‏      <div class="isec-body" id="iLocation"></div>
+‏    </div>
+‏    <div class="isec">
+‏      <div class="isec-t">⚡ REMEMBER THESE</div>
+‏      <div class="ichips" id="iChips"></div>
+‏    </div>
+‏    <button class="bcontinue" id="bContinue">Continue →</button>
+‏  </div>
+‏</div>
+
+‏<div class="wrap">
+
+‏<!-- ══════════ HOME ══════════ -->
+
+‏<div class="scr on" id="sHome">
+‏  <div class="topbar">
+‏    <div class="logo">OSCD // HISTOLOGY</div>
+‏    <div class="dot"></div>
+‏  </div>
+‏  <div class="hero">
+‏    <div class="hero-badge">PRACTICAL EXAM TRAINER</div>
+‏    <h1 class="hero-h1">Histo<span>Slide</span></h1>
+‏    <p class="hero-sub">// IDENTIFY · LEARN · MASTER //</p>
+‏    <div class="name-wrap">
+‏      <input type="text" class="name-input" id="nInput" placeholder="Enter your name to begin…">
+‏    </div>
+‏    <div class="cards">
+‏      <div class="card cq" onclick="go('quick')">
+‏        <div class="card-ico">⚡</div>
+‏        <div class="card-name">Quick Exam</div>
+‏        <div class="card-desc">10 random slides<br>5 min per slide<br>Timed challenge</div>
+‏        <div class="card-tag">10 SLIDES · TIMED</div>
+‏      </div>
+‏      <div class="card cf" onclick="go('full')">
+‏        <div class="card-ico">🔬</div>
+‏        <div class="card-name">Full Exam</div>
+‏        <div class="card-desc">All 55 slides<br>No time limit<br>Complete review</div>
+‏        <div class="card-tag">55 SLIDES · UNTIMED</div>
+‏      </div>
+‏    </div>
+‏    <div class="upload-box">
+‏      <div class="ul-title">SLIDE IMAGES — UPLOAD YOUR 55 IMAGES</div>
+‏      <div class="ul-row">
+‏        <button class="ul-btn" onclick="document.getElementById('fInput').click()">📁 Upload Images</button>
+‏        <input type="file" id="fInput" multiple accept="image/*" onchange="loadImgs(event)">
+‏        <span class="ul-status" id="ulStatus">No images — placeholders shown</span>
+‏      </div>
+‏    </div>
+‏  </div>
+‏</div>
+
+‏<!-- ══════════ EXAM ══════════ -->
+
+‏<div class="scr" id="sExam">
+‏  <div class="topbar">
+‏    <div class="emeta">Slide <b id="eNum">1</b> / <span id="eTotal">10</span></div>
+‏    <div class="eright">
+‏      <div class="emeta" id="eMode"></div>
+‏      <div class="tring" id="tRing">
+‏        <svg class="tsvg" width="68" height="68" viewBox="0 0 68 68">
+‏          <circle class="tbg" cx="34" cy="34" r="28"/>
+‏          <circle class="tarc" id="tArc" cx="34" cy="34" r="28" stroke-dasharray="175.9" stroke-dashoffset="0"/>
+‏        </svg>
+‏        <div class="tnum" id="tNum">5:00</div>
+‏      </div>
+‏    </div>
+‏  </div>
+‏  <div class="ptrack"><div class="pfill" id="pFill" style="width:0%"></div></div>
+‏  <div class="sframe">
+‏    <div class="simg-wrap">
+‏      <img class="simg" id="sImg" src="" alt="" style="display:none">
+‏      <div class="sph" id="sPh">
+‏        <div class="sph-ico">
+‏          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#3a566e" stroke-width="1.5">
+‏            <circle cx="13" cy="13" r="11"/><circle cx="13" cy="13" r="5"/><circle cx="13" cy="13" r="1.5" fill="#3a566e" stroke="none"/>
+‏          </svg>
+‏        </div>
+‏        <p>SLIDE IMAGE</p>
+‏      </div>
+‏      <div class="sbadge tl" id="sCode">SL-01</div>
+‏      <div class="sbadge tr">40×</div>
+‏    </div>
+‏  </div>
+‏  <label class="alabel">SLIDE NAME — TYPE EXACTLY AS IT APPEARS</label>
+‏  <div class="arow">
+‏    <input type="text" class="ainput" id="aIn" placeholder="e.g. Hyaline Cartilage" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+‏    <button class="bsub" onclick="submit()">Submit →</button>
+‏  </div>
+‏  <button class="bskip" onclick="skip()">Skip this slide</button>
+‏</div>
+
+‏<!-- ══════════ RESULTS ══════════ -->
+
+‏<div class="scr" id="sRes">
+‏  <div class="topbar"><div class="logo">OSCD // RESULTS</div><div class="dot"></div></div>
+‏  <div class="rhero">
+‏    <div class="rname" id="rName"></div>
+‏    <div class="rmodetag" id="rModeTag"></div>
+‏    <div class="sring">
+‏      <svg class="srsvg" width="158" height="158" viewBox="0 0 158 158">
+‏        <circle class="srbg" cx="79" cy="79" r="67"/>
+‏        <circle class="srarc" id="srArc" cx="79" cy="79" r="67" stroke-dasharray="421" stroke-dashoffset="421"/>
+‏      </svg>
+‏      <div class="srlabel">
+‏        <div class="srbig" id="rFrac"></div>
+‏        <div class="srpct" id="rPct"></div>
+‏      </div>
+‏    </div>
+‏    <div class="gpill" id="gPill"></div>
+‏  </div>
+‏  <div class="rgrid">
+‏    <div class="rstat"><div class="rsn" style="color:var(--green)" id="rC">0</div><div class="rsl">CORRECT</div></div>
+‏    <div class="rstat"><div class="rsn" style="color:var(--red)" id="rW">0</div><div class="rsl">WRONG</div></div>
+‏    <div class="rstat"><div class="rsn" style="color:var(--muted2)" id="rS">0</div><div class="rsl">SKIPPED</div></div>
+‏  </div>
+‏  <div class="alog" id="aLog"></div>
+‏  <div class="rbtns">
+‏    <button class="bhome" onclick="goHome()">← Home</button>
+‏    <button class="bagain" onclick="again()">Try Again ↺</button>
+‏  </div>
+‏</div>
+
+‏</div><!-- /wrap -->
+‏<script>
+// ═══════════════════════════════════════════════
+‏// SLIDE DATA  —  55 histology slides
+‏// imageUrl: leave "" or paste a URL
+// ═══════════════════════════════════════════════
+‏const SLIDES=[
+‏{name:"Hyaline Cartilage",imageUrl:"",
+‏ features:"Chondrocytes sit in lacunae within a homogeneous, glassy matrix. Collagen fibers are present but not visible by light microscopy. Surrounded by perichondrium except on articular surfaces.",
+‏ location:"Articular surfaces, tracheal rings, costal cartilage, bronchi, fetal skeleton.",
+‏ tags:["Glassy matrix","No visible fibers","Perichondrium","Chondrocytes in lacunae"]},
+
+‏{name:“Elastic Cartilage”,imageUrl:””,
+‏features:“Chondrocytes in lacunae surrounded by a dense network of elastic fibers visible with orcein or Verhoeff stain. More cellular than hyaline cartilage.”,
+‏location:“Auricle (external ear), epiglottis, auditory tube, laryngeal cartilages.”,
+‏tags:[“Elastic fiber network”,“Orcein/Verhoeff stain”,“Epiglottis”,“More cellular than hyaline”]},
+
+‏{name:“Fibrocartilage”,imageUrl:””,
+‏features:“Thick parallel bundles of Type I collagen fibers with chondrocytes arranged in rows between them. No perichondrium. Transitional tissue between dense CT and cartilage.”,
+‏location:“Intervertebral discs (annulus fibrosus), pubic symphysis, articular discs, menisci.”,
+‏tags:[“Type I collagen bundles”,“No perichondrium”,“Rows of chondrocytes”,“Transitional tissue”]},
+
+‏{name:“Compact Bone”,imageUrl:””,
+‏features:“Osteons (Haversian systems): concentric bony lamellae around a central (Haversian) canal. Osteocytes in lacunae connected by canaliculi. Outer and inner circumferential lamellae.”,
+‏location:“Cortex (diaphysis) of long bones.”,
+‏tags:[“Osteons”,“Haversian canal”,“Osteocytes in lacunae”,“Canaliculi”]},
+
+‏{name:“Spongy Bone”,imageUrl:””,
+‏features:“Irregular trabeculae (bony spicules) containing osteocytes. Spaces between trabeculae filled with red bone marrow. No haversian systems.”,
+‏location:“Epiphysis of long bones, flat bones, vertebral bodies.”,
+‏tags:[“Trabeculae”,“Bone marrow spaces”,“No osteons”,“Irregular network”]},
+
+‏{name:“Intramembranous Ossification”,imageUrl:””,
+‏features:“Woven bone spicules forming directly within fibrovascular mesenchyme. Osteoblasts line the spicules. No cartilage template involved.”,
+‏location:“Flat bones of skull, mandible, part of clavicle.”,
+‏tags:[“No cartilage template”,“Mesenchyme origin”,“Osteoblast-lined spicules”,“Flat bones”]},
+
+‏{name:“Endochondral Ossification”,imageUrl:””,
+‏features:“Epiphyseal growth plate with 5 zones from top to bottom: resting, proliferating (columnar chondrocytes), hypertrophic, calcified, and ossification zone. Cartilage is progressively replaced by bone.”,
+‏location:“Long bones — growth plate (physis).”,
+‏tags:[“5 zones”,“Cartilage replaced by bone”,“Growth plate”,“Long bones”]},
+
+‏{name:“Skeletal Muscle”,imageUrl:””,
+‏features:“Long cylindrical multinucleated fibers with peripherally located nuclei. Prominent cross-striations (alternating A and I bands). Organised by endomysium, perimysium, and epimysium.”,
+‏location:“Voluntary muscles attached to skeleton.”,
+‏tags:[“Peripheral nuclei”,“Cross-striations”,“Multinucleate”,“Endomysium/Perimysium/Epimysium”]},
+
+‏{name:“Cardiac Muscle”,imageUrl:””,
+‏features:“Short branched fibers with 1–2 central nuclei. Cross-striations present. Unique intercalated discs (step-like dark lines) between cells. Involuntary.”,
+‏location:“Heart wall (myocardium).”,
+‏tags:[“Central nucleus”,“Intercalated discs”,“Branched fibers”,“Cross-striations”]},
+
+‏{name:“Smooth Muscle”,imageUrl:””,
+‏features:“Spindle-shaped cells with a single central nucleus. No visible cross-striations. Cells pack in sheets; contracted nuclei appear corkscrew-shaped.”,
+‏location:“Walls of hollow organs: GIT, blood vessels, uterus, bladder, respiratory passages.”,
+‏tags:[“No striations”,“Single central nucleus”,“Spindle shape”,“Involuntary”]},
+
+‏{name:“Simple Squamous Epithelium”,imageUrl:””,
+‏features:“Single layer of flat, scale-like cells with a centrally bulging nucleus. Appears as thin floor-tile pattern.”,
+‏location:“Alveoli, Bowman capsule parietal layer, mesothelium (pleura/peritoneum), vascular endothelium.”,
+‏tags:[“Single layer”,“Flat cells”,“Centrally bulging nucleus”,“Mesothelium/Endothelium”]},
+
+‏{name:“Simple Cuboidal Epithelium”,imageUrl:””,
+‏features:“Single layer of cells as tall as they are wide (cube-shaped) with a central round nucleus. Often has a brush border (microvilli).”,
+‏location:“Kidney tubules, thyroid follicles, small ducts, ovarian surface epithelium.”,
+‏tags:[“Cube-shaped cells”,“Central round nucleus”,“Single layer”,“Kidney tubules”]},
+
+‏{name:“Simple Columnar Epithelium”,imageUrl:””,
+‏features:“Single layer of cells taller than wide with basally located oval nuclei. May include goblet cells, striated border (microvilli), or cilia depending on location.”,
+‏location:“Stomach to rectum (GIT), gallbladder, uterine tubes.”,
+‏tags:[“Taller than wide”,“Basal oval nucleus”,“Goblet cells possible”,“Striated border”]},
+
+‏{name:“Pseudostratified Columnar Epithelium”,imageUrl:””,
+‏features:“Appears multilayered because nuclei are at different heights, but all cells contact the basement membrane. Usually ciliated with interspersed goblet cells.”,
+‏location:“Respiratory tract (trachea, bronchi), epididymis.”,
+‏tags:[“All cells touch BM”,“Staggered nuclei”,“Goblet cells”,“Cilia (respiratory)”]},
+
+‏{name:“Stratified Squamous Keratinized”,imageUrl:””,
+‏features:“Multiple cell layers; surface covered by anucleate, eosinophilic, dead keratinocytes (keratin). Deepest layer is basal columnar/cuboidal cells.”,
+‏location:“Epidermis of palms and soles (thick skin), outer skin in general.”,
+‏tags:[“Anucleate surface keratin”,“Multiple layers”,“Basal cell proliferation”,“Thick skin”]},
+
+‏{name:“Stratified Squamous Non-keratinized”,imageUrl:””,
+‏features:“Multiple cell layers; surface cells retain nuclei and remain flat. No anucleate keratin layer. Keeps surfaces moist.”,
+‏location:“Oral mucosa, esophagus, vagina, corneal epithelium.”,
+‏tags:[“Nucleated surface cells”,“No keratin layer”,“Moist surfaces”,“Oral mucosa/Esophagus”]},
+
+‏{name:“Transitional Epithelium”,imageUrl:””,
+‏features:“Varies with distension: relaxed state shows dome-shaped ‘umbrella cells’ on surface and 4–6 layers. Distended state appears thinner, 2–3 layers.”,
+‏location:“Urinary tract: renal pelvis, ureter, urinary bladder.”,
+‏tags:[“Umbrella cells”,“Dome-shaped (relaxed)”,“Changes with distension”,“Bladder/Ureter”]},
+
+‏{name:“Dense Regular Connective Tissue”,imageUrl:””,
+‏features:“Tightly packed, parallel collagen bundles oriented in one direction. Fibroblasts squeezed into rows between bundles. Poorly vascularized.”,
+‏location:“Tendons, ligaments, aponeuroses, corneal stroma.”,
+‏tags:[“Parallel collagen”,“Fibroblasts in rows”,“Tendons/Ligaments”,“Poorly vascular”]},
+
+‏{name:“Dense Irregular Connective Tissue”,imageUrl:””,
+‏features:“Densely packed collagen fibers interwoven in all directions. Scattered fibroblasts. Resists tension from multiple directions.”,
+‏location:“Dermis (reticular layer), organ capsules, periosteum, perichondrium.”,
+‏tags:[“Random fiber orientation”,“Scattered fibroblasts”,“Dermis”,“Organ capsules”]},
+
+‏{name:“Areolar Connective Tissue”,imageUrl:””,
+‏features:“Loose arrangement of collagen and elastic fibers in abundant ground substance. Varied cells: fibroblasts, mast cells, macrophages, plasma cells.”,
+‏location:“Subcutaneous tissue, lamina propria of mucous membranes, around organs and vessels.”,
+‏tags:[“Loose fiber arrangement”,“Varied cell types”,“Ground substance”,“Lamina propria”]},
+
+‏{name:“Adipose Tissue”,imageUrl:””,
+‏features:“Large unilocular fat cells (adipocytes) with cytoplasm and nucleus pushed to the cell periphery, creating a ‘signet ring’ appearance. Thin CT framework (septa).”,
+‏location:“Subcutaneous fat, omentum, mesentery, bone marrow, orbit.”,
+‏tags:[“Signet ring appearance”,“Unilocular fat cell”,“Peripheral nucleus”,“White adipose tissue”]},
+
+‏{name:“Reticular Connective Tissue”,imageUrl:””,
+‏features:“Network of fine reticular fibers (Type III collagen) stained black with silver stain. Forms a supporting mesh for cells in lymphoid organs.”,
+‏location:“Lymph nodes, spleen, bone marrow, liver sinusoids.”,
+‏tags:[“Type III collagen”,“Silver stain positive”,“Sponge-like mesh”,“Lymphoid organs”]},
+
+‏{name:“Blood Smear”,imageUrl:””,
+‏features:“RBCs: anucleate biconcave discs. WBCs: neutrophils (multilobed), eosinophils (bilobed + red granules), basophils (blue-purple granules), lymphocytes (large nucleus), monocytes (kidney-shaped nucleus). Platelets: small fragments.”,
+‏location:“Peripheral blood.”,
+‏tags:[“Biconcave anucleate RBCs”,“5 WBC types”,“Platelets”,“Multilobed neutrophil”]},
+
+‏{name:“Multipolar Neuron”,imageUrl:””,
+‏features:“Large cell body (soma) with multiple dendrites and a single axon. Nissl bodies (rough ER) in cytoplasm stain blue. Large round nucleus with prominent nucleolus.”,
+‏location:“Anterior horn of spinal cord, autonomic ganglia, cerebral cortex.”,
+‏tags:[“Multiple processes”,“Nissl bodies”,“Prominent nucleolus”,“Large soma”]},
+
+‏{name:“Peripheral Nerve”,imageUrl:””,
+‏features:“In cross section: nerve fascicles wrapped in perineurium. Endoneurium surrounds individual myelinated axons. All fascicles bound together by epineurium.”,
+‏location:“Peripheral nervous system (e.g., sciatic nerve cross section).”,
+‏tags:[“Perineurium”,“Endoneurium”,“Epineurium”,“Myelinated axons in fascicles”]},
+
+‏{name:“Spinal Cord”,imageUrl:””,
+‏features:“Butterfly-shaped grey matter (anterior and posterior horns) surrounded by white matter. Central canal lined by ependymal cells. Large multipolar neurons in anterior horn.”,
+‏location:“Central nervous system — vertebral canal.”,
+‏tags:[“H-shaped grey matter”,“Central canal”,“Anterior horn neurons”,“White matter surrounds”]},
+
+‏{name:“Cerebellum”,imageUrl:””,
+‏features:“Three cortex layers: outer molecular (sparse, pale), middle Purkinje cell layer (large flask-shaped cells), inner granular layer (densely packed small cells). White matter core = arbor vitae.”,
+‏location:“Posterior cranial fossa.”,
+‏tags:[“3 cortex layers”,“Flask-shaped Purkinje cells”,“Dense granular layer”,“Arbor vitae”]},
+
+‏{name:“Thin Skin”,imageUrl:””,
+‏features:“Epidermis with 4 layers (no stratum lucidum). Thinner overall epidermis. Contains hair follicles, sebaceous glands, and sweat glands.”,
+‏location:“Most body surfaces except palms and soles.”,
+‏tags:[“4 epidermal layers”,“No stratum lucidum”,“Hair follicles”,“Sebaceous glands”]},
+
+‏{name:“Thick Skin”,imageUrl:””,
+‏features:“Epidermis with all 5 layers including stratum lucidum. Very thick epidermis. No hair follicles. Abundant eccrine sweat glands. Deep rete ridges.”,
+‏location:“Palms of hands and soles of feet.”,
+‏tags:[“5 layers”,“Stratum lucidum”,“No hair follicles”,“Many sweat glands”]},
+
+‏{name:“Trachea”,imageUrl:””,
+‏features:“Pseudostratified ciliated columnar epithelium with goblet cells. Lamina propria with seromucous glands. C-shaped hyaline cartilage rings in wall. Posterior trachealis (smooth muscle) closes the ring.”,
+‏location:“Respiratory tract — between larynx and primary bronchi.”,
+‏tags:[“PCCE + goblet cells”,“C-shaped cartilage rings”,“Seromucous glands”,“Trachealis muscle”]},
+
+‏{name:“Lung”,imageUrl:””,
+‏features:“Alveoli lined by Type I pneumocytes (gas exchange, flat) and Type II pneumocytes (surfactant, cuboidal). Alveolar macrophages (dust cells) in lumen. Thin alveolar walls with rich capillary network.”,
+‏location:“Thoracic cavity — paired organs.”,
+‏tags:[“Alveoli”,“Type I & II pneumocytes”,“Alveolar macrophages”,“Thin walls for gas exchange”]},
+
+‏{name:“Esophagus”,imageUrl:””,
+‏features:“Non-keratinized stratified squamous epithelium. Muscularis mucosae present. Mucous glands in submucosa. Muscularis externa is mixed: upper third skeletal, lower third smooth, middle mixed.”,
+‏location:“Between pharynx and stomach — posterior mediastinum.”,
+‏tags:[“SSE non-keratinized”,“Mucous glands in submucosa”,“Mixed muscularis”,“No villi”]},
+
+‏{name:“Stomach”,imageUrl:””,
+‏features:“Gastric pits leading to gastric glands. Surface covered by simple columnar mucus-secreting cells. Chief cells (blue zymogen granules, pepsinogen) and parietal cells (eosinophilic, HCl) in glands. 3 muscle layers.”,
+‏location:“Upper GIT between esophagus and duodenum.”,
+‏tags:[“Gastric pits”,“Chief cells (pepsinogen)”,“Parietal cells (HCl)”,“3 smooth muscle layers”]},
+
+‏{name:“Small Intestine”,imageUrl:””,
+‏features:“Villi projecting into lumen + crypts of Lieberkühn. Enterocytes with a brush border (microvilli). Goblet cells throughout. Paneth cells at base of crypts (eosinophilic granules). Muscularis mucosae.”,
+‏location:“Duodenum, jejunum, ileum.”,
+‏tags:[“Villi + crypts”,“Brush border”,“Goblet cells”,“Paneth cells at crypt base”]},
+
+‏{name:“Large Intestine”,imageUrl:””,
+‏features:“No villi. Abundant straight crypts packed with goblet cells. Simple columnar epithelium. Muscularis externa shows taenia coli (3 bands). No Paneth cells (except cecum).”,
+‏location:“Cecum, ascending/transverse/descending colon, sigmoid, rectum.”,
+‏tags:[“No villi”,“Abundant goblet cells”,“Straight crypts”,“Taenia coli”]},
+
+‏{name:“Liver”,imageUrl:””,
+‏features:“Hepatocytes arranged in plates (cords) radiating from a central vein. Portal triads at corners of lobule contain portal vein branch, hepatic artery branch, and bile duct. Sinusoids with Kupffer cells.”,
+‏location:“Right hypochondriac and epigastric region — largest gland.”,
+‏tags:[“Hepatocyte plates/cords”,“Central vein”,“Portal triads”,“Sinusoids + Kupffer cells”]},
+
+‏{name:“Pancreas”,imageUrl:””,
+‏features:“Exocrine portion: serous acini with apical zymogen granules, intercalated ducts, centroacinar cells. Endocrine islets of Langerhans: pale clusters of cells (α, β, δ cells) scattered between acini. No striated ducts.”,
+‏location:“Retroperitoneal, posterior to stomach.”,
+‏tags:[“Serous acini + Islets”,“Zymogen granules”,“Centroacinar cells”,“Intercalated ducts”]},
+
+‏{name:“Parotid Gland”,imageUrl:””,
+‏features:“Purely serous gland. Round acini with pyramidal cells and dense apical zymogen granules. Prominent striated ducts. Increasing adipose tissue infiltration with age.”,
+‏location:“Anterior and inferior to the ear — largest salivary gland.”,
+‏tags:[“Purely serous acini”,“Striated ducts”,“Zymogen granules”,“Adipose infiltration”]},
+
+‏{name:“Submandibular Gland”,imageUrl:””,
+‏features:“Mixed gland, predominantly serous. Serous demilunes (half-moon caps) on mucous acini. Both serous and mucous acini visible. Prominent striated ducts.”,
+‏location:“Floor of mouth — submandibular fossa, beneath mylohyoid.”,
+‏tags:[“Mixed mostly serous”,“Serous demilunes”,“Both acini types”,“Prominent striated ducts”]},
+
+‏{name:“Sublingual Gland”,imageUrl:””,
+‏features:“Mixed gland, predominantly mucous. Many mucous acini with only occasional serous demilunes. Short/absent striated ducts. Poorly defined capsule.”,
+‏location:“Floor of mouth beneath the tongue — smallest major salivary gland.”,
+‏tags:[“Mixed mostly mucous”,“Few serous demilunes”,“Short ducts”,“Poorly defined capsule”]},
+
+‏{name:“Kidney”,imageUrl:””,
+‏features:“Cortex: renal corpuscles (glomerulus + Bowman capsule) + proximal convoluted tubules (tall cells, brush border) + distal convoluted tubules (low cuboidal). Medulla: thin loops of Henle + collecting ducts.”,
+‏location:“Retroperitoneal, bilateral, T12–L3.”,
+‏tags:[“Glomeruli in cortex”,“Bowman capsule”,“Proximal tubule brush border”,“Collecting ducts in medulla”]},
+
+‏{name:“Ureter”,imageUrl:””,
+‏features:“Transitional epithelium (urothelium) lining star-shaped lumen. Muscularis: inner longitudinal + outer circular (lower third adds outer longitudinal). Adventitia outside.”,
+‏location:“Between renal pelvis and urinary bladder.”,
+‏tags:[“Transitional epithelium”,“Star-shaped lumen”,“2–3 muscle layers”,“No glands”]},
+
+‏{name:“Urinary Bladder”,imageUrl:””,
+‏features:“Transitional epithelium with large dome-shaped umbrella cells. Thick detrusor muscle (3 interlacing smooth muscle layers). Lamina propria. No serosa on most surfaces.”,
+‏location:“Pelvic cavity — posterior to pubic symphysis.”,
+‏tags:[“Transitional epithelium”,“Umbrella cells”,“Thick detrusor”,“Distensible wall”]},
+
+‏{name:“Thymus”,imageUrl:””,
+‏features:“Lobules divided into a dark lymphocyte-rich cortex and a pale medulla. Medulla contains Hassall corpuscles (concentric whorled epithelial cells). Site of T-cell maturation. Involutes with age.”,
+‏location:“Superior mediastinum, anterior to great vessels.”,
+‏tags:[“Hassall corpuscles”,“Dark cortex / pale medulla”,“T-cell maturation”,“Involutes with age”]},
+
+‏{name:“Spleen”,imageUrl:””,
+‏features:“White pulp (periarterial lymphoid sheaths — PALS around central arteriole, lymphoid follicles) embedded in red pulp (venous sinusoids + splenic cords of Billroth). Thick fibromuscular capsule with trabeculae.”,
+‏location:“Left hypochondriac region, posterior to stomach.”,
+‏tags:[“White pulp (PALS + follicles)”,“Red pulp (sinusoids)”,“Central arteriole”,“Thick capsule with trabeculae”]},
+
+‏{name:“Lymph Node”,imageUrl:””,
+‏features:“Cortex: lymphoid follicles (B cells, germinal centers). Paracortex: T cells, high endothelial venules. Medulla: medullary cords (plasma cells) and sinuses. Afferent lymphatics enter capsule; one efferent at hilum.”,
+‏location:“Along lymphatic vessels throughout body.”,
+‏tags:[“Follicles (B cells)”,“Paracortex (T cells)”,“Medullary sinuses”,“Afferent/efferent lymphatics”]},
+
+‏{name:“Tonsil”,imageUrl:””,
+‏features:“Partially encapsulated lymphoid tissue. Crypts invaginating from surface lined by non-keratinized stratified squamous epithelium. Lymphoid follicles with germinal centers beneath epithelium.”,
+‏location:“Oropharynx (palatine), nasopharynx (pharyngeal/adenoids), base of tongue (lingual).”,
+‏tags:[“Crypts”,“SSE lining”,“Germinal centers”,“Partial capsule”]},
+
+‏{name:“Thyroid Gland”,imageUrl:””,
+‏features:“Spherical follicles of varying size filled with homogeneous eosinophilic colloid (thyroglobulin). Follicular cells: cuboidal (active) to squamous (inactive). Parafollicular C-cells (larger, paler) between follicles.”,
+‏location:“Anterior neck — 2 lobes + isthmus, anterior to trachea.”,
+‏tags:[“Colloid-filled follicles”,“Follicular cells (T3/T4)”,“C-cells (calcitonin)”,“Eosinophilic colloid”]},
+
+‏{name:“Parathyroid Gland”,imageUrl:””,
+‏features:“Chief cells: small, dark-staining nuclei, secrete PTH. Oxyphil cells: larger, intensely eosinophilic, function uncertain. Embedded in adipose tissue between chief cells.”,
+‏location:“Usually 4 glands on posterior surface of thyroid.”,
+‏tags:[“Chief cells (PTH)”,“Oxyphil cells (eosinophilic)”,“Adipose between cells”,“4 glands posterior thyroid”]},
+
+‏{name:“Adrenal Gland”,imageUrl:””,
+‏features:“Cortex (3 zones from outside in): glomerulosa (mineralocorticoids), fasciculata (vacuolated ‘spongiocytes’, glucocorticoids), reticularis (sex steroids). Medulla: large pale chromaffin cells secreting catecholamines. Chromaffin reaction positive.”,
+‏location:“Suprarenal — superior pole of each kidney.”,
+‏tags:[“Glomerulosa-Fasciculata-Reticularis”,“Vacuolated spongiocytes”,“Chromaffin cells”,“Catecholamines from medulla”]},
+
+‏{name:“Pituitary Gland”,imageUrl:””,
+‏features:“Adenohypophysis (anterior): acidophils (GH, PRL), basophils (FSH, LH, TSH, ACTH), chromophobes (inactive). Neurohypophysis (posterior): unmyelinated axons, pituicytes (glial), Herring bodies (neurosecretory granules).”,
+‏location:“Sella turcica of sphenoid bone.”,
+‏tags:[“Acidophils + basophils + chromophobes”,“Herring bodies”,“Neurohypophysis = axon terminals”,“Two lobes”]},
+
+‏{name:“Ovary”,imageUrl:””,
+‏features:“Cortex contains follicles at various stages (primordial → primary → secondary → Graafian/antral). Corpus luteum (large, yellow/luteinized cells) and corpus albicans (white scar). Germinal epithelium (simple squamous/cuboidal) covers surface.”,
+‏location:“Pelvic cavity lateral to uterus.”,
+‏tags:[“Follicle stages”,“Corpus luteum”,“Germinal epithelium”,“Stromal connective tissue”]},
+
+‏{name:“Testis”,imageUrl:””,
+‏features:“Seminiferous tubules lined by spermatogenic cells (spermatogonia → spermatocytes → spermatids) and supporting Sertoli cells. Leydig (interstitial) cells cluster between tubules — testosterone production.”,
+‏location:“Scrotum — outside abdominal cavity for temperature regulation.”,
+‏tags:[“Seminiferous tubules”,“Sertoli cells”,“Leydig cells”,“Spermatogenesis stages”]},
+
+‏{name:“Oral Mucosa”,imageUrl:””,
+‏features:“Non-keratinized or parakeratinized stratified squamous epithelium. Lamina propria of dense CT. Submucosa variable (present in cheek/floor, absent in gingiva/hard palate). No muscularis mucosae.”,
+‏location:“Lining of oral cavity: cheek, lip, gingiva, palate, floor of mouth, tongue.”,
+‏tags:[“SSE (non-keratinized/parakeratinized)”,“No muscularis mucosae”,“Lamina propria”,“Submucosa variable”]},
+
+‏{name:“Tooth (Decalcified)”,imageUrl:””,
+‏features:“Dentin: tubules containing odontoblast processes (Tomes fibers) running from pulp to DEJ. Pulp: loose CT with odontoblasts lining pulp chamber, nerves, vessels. Predentin (innermost unmineralized layer) seen.”,
+‏location:“Longitudinal ground/decalcified section of a tooth.”,
+‏tags:[“Dentinal tubules”,“Odontoblast processes”,“Pulp tissue (loose CT)”,“Predentin layer”]},
+
+‏{name:“Periodontal Ligament”,imageUrl:””,
+‏features:“Dense fibrous CT suspending tooth in alveolar socket. Principal fiber bundles embedded as Sharpey fibers in cementum and alveolar bone. Fibroblasts predominate. Rich vascular supply.”,
+‏location:“Space between root cementum and alveolar bone proper.”,
+‏tags:[“Sharpey fibers”,“Dense CT”,“Fibroblasts predominate”,“Cementum–Bone suspension”]}
+];
+
+// ─────────────────────────────────────────
+‏// STATE
+// ─────────────────────────────────────────
+‏let sName=’’,mode=’’,lastMode=’’;
+‏let list=[],idx=0,answers=[];
+‏let tInt=null,sLeft=300;
+‏let imgMap={};
+‏const CIRC_T=175.9,CIRC_S=421;
+
+// ─────────────────────────────────────────
+‏// IMAGE LOADING
+// ─────────────────────────────────────────
+‏function loadImgs(e){
+‏const files=[…e.target.files];
+‏let n=0;
+‏files.forEach(f=>{
+‏const r=new FileReader();
+‏r.onload=ev=>{
+‏const key=f.name.replace(/.[^.]+$/,’’).toLowerCase().replace(/[-*()]/g,’ ‘).replace(/\s+/g,’ ’).trim();
+‏imgMap[key]=ev.target.result;
+‏imgMap[f.name.toLowerCase()]=ev.target.result;
+‏n++;
+‏const el=document.getElementById(‘ulStatus’);
+‏if(n===files.length){el.textContent=`✓ ${n} images loaded`;el.className=‘ul-status ok’;}
+‏else el.textContent=`Loading… ${n}/${files.length}`;
+};
+‏r.readAsDataURL(f);
+});
+}
+‏function getImg(slide){
+‏if(slide.imageUrl) return slide.imageUrl;
+‏const k=slide.name.toLowerCase().replace(/[-*()]/g,’ ‘).replace(/\s+/g,’ ’).trim();
+‏if(imgMap[k]) return imgMap[k];
+‏for(const key in imgMap) if(key.includes(k)||k.includes(key)) return imgMap[key];
+‏return null;
+}
+
+// ─────────────────────────────────────────
+‏// HOME → START
+// ─────────────────────────────────────────
+‏function go(m){
+‏const v=document.getElementById(‘nInput’).value.trim();
+‏if(!v){
+‏document.getElementById(‘nInput’).classList.add(‘err’);
+‏document.getElementById(‘nInput’).focus();
+‏setTimeout(()=>document.getElementById(‘nInput’).classList.remove(‘err’),1600);
+‏return;
+}
+‏sName=v; mode=lastMode=m;
+‏start();
+}
+‏function shuffle(a){
+‏const b=[…a];
+‏for(let i=b.length-1;i>0;i–){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+‏return b;
+}
+‏function start(){
+‏list=mode===‘quick’?shuffle(SLIDES).slice(0,10):shuffle(SLIDES);
+‏idx=0;answers=[];
+‏document.getElementById(‘eTotal’).textContent=list.length;
+‏document.getElementById(‘eMode’).textContent=mode===‘quick’?‘⚡ QUICK’:‘🔬 FULL’;
+‏document.getElementById(‘tRing’).style.display=mode===‘quick’?‘block’:‘none’;
+‏show(‘sExam’);loadSlide();
+}
+
+// ─────────────────────────────────────────
+‏// SLIDE
+// ─────────────────────────────────────────
+‏function loadSlide(){
+‏if(idx>=list.length){end();return;}
+‏const sl=list[idx];
+‏document.getElementById(‘eNum’).textContent=idx+1;
+‏document.getElementById(‘pFill’).style.width=(idx/list.length*100)+’%’;
+‏document.getElementById(‘sCode’).textContent=‘SL-’+String(idx+1).padStart(2,‘0’);
+‏const ai=document.getElementById(‘aIn’);
+‏ai.value=’’;ai.className=‘ainput’;ai.focus();
+‏const im=getImg(sl);
+‏const img=document.getElementById(‘sImg’);
+‏const ph=document.getElementById(‘sPh’);
+‏if(im){img.src=im;img.style.display=‘block’;ph.style.display=‘none’;}
+‏else{img.style.display=‘none’;ph.style.display=‘flex’;}
+‏if(mode===‘quick’) startTimer();
+‏else{clearInterval(tInt);document.getElementById(‘tNum’).textContent=’—’;}
+}
+‏function startTimer(){
+‏clearInterval(tInt);sLeft=300;updTimer();
+‏tInt=setInterval(()=>{sLeft–;updTimer();if(sLeft<=0){clearInterval(tInt);skip(true);}},1000);
+}
+‏function updTimer(){
+‏const m=Math.floor(sLeft/60),s=sLeft%60;
+‏document.getElementById(‘tNum’).textContent=m+’:’+(s<10?‘0’:’’)+s;
+‏document.getElementById(‘tArc’).style.strokeDashoffset=CIRC_T*(1-sLeft/300);
+‏document.getElementById(‘tArc’).style.stroke=sLeft<=30?‘var(–red)’:sLeft<=60?‘var(–yellow)’:‘var(–teal)’;
+}
+
+// ─────────────────────────────────────────
+‏// SUBMIT — STRICT EXACT MATCH (case-insensitive)
+// ─────────────────────────────────────────
+‏function submit(){
+‏clearInterval(tInt);
+‏const v=document.getElementById(‘aIn’).value.trim();
+‏if(!v){skip();return;}
+‏const sl=list[idx];
+‏const ok=v.toLowerCase()===sl.name.toLowerCase();
+‏document.getElementById(‘aIn’).className=‘ainput ‘+(ok?‘cf’:‘wf’);
+‏answers.push({sl,user:v,ok,skipped:false});
+‏toast(ok?‘✓ CORRECT’:‘✗ WRONG’,ok?‘tok’:‘tno’);
+‏showInfo(sl,v,ok?‘ic’:‘iw’);
+}
+‏function skip(timeout=false){
+‏clearInterval(tInt);
+‏const sl=list[idx];
+‏const label=timeout?’(time up)’:’(skipped)’;
+‏answers.push({sl,user:label,ok:false,skipped:true});
+‏toast(timeout?‘⏱ TIME UP’:’— SKIPPED’,‘tsk’);
+‏showInfo(sl,label,‘is’);
+}
+‏function nextSlide(){
+‏document.getElementById(‘iOverlay’).classList.remove(‘on’);
+‏idx++;
+‏setTimeout(loadSlide,200);
+}
+
+// ─────────────────────────────────────────
+‏// INFO PANEL
+// ─────────────────────────────────────────
+‏function showInfo(sl,user,status){
+‏const badge=document.getElementById(‘iBadge’);
+‏badge.className=‘ibadge ‘+status;
+‏badge.textContent=status===‘ic’?‘✓ CORRECT’:status===‘iw’?‘✗ WRONG’:’— SKIPPED’;
+‏document.getElementById(‘iName’).textContent=sl.name;
+‏const a=document.getElementById(‘iAns’);
+‏a.className=‘ians ‘+status;
+‏if(status===‘ic’) a.textContent=‘Your answer: ‘+user;
+‏else if(status===‘iw’) a.innerHTML=‘Your answer: <b>’+user+’</b><br>Correct answer: <b>’+sl.name+’</b>’;
+‏else a.textContent=‘Skipped — Correct answer: ‘+sl.name;
+‏const iw=document.getElementById(‘iImgW’);
+‏const src=getImg(sl);
+‏iw.innerHTML=src?`<img src="${src}" alt="${sl.name}">`:`<div class="inoph">NO IMAGE AVAILABLE</div>`;
+‏document.getElementById(‘iFeatures’).textContent=sl.features;
+‏document.getElementById(‘iLocation’).textContent=sl.location;
+‏document.getElementById(‘iChips’).innerHTML=sl.tags.map(t=>`<span class="ichip">${t}</span>`).join(’’);
+‏document.getElementById(‘iOverlay’).classList.add(‘on’);
+}
+‏document.getElementById(‘bContinue’).onclick=nextSlide;
+‏document.getElementById(‘iOverlay’).addEventListener(‘click’,function(e){if(e.target===this)nextSlide();});
+
+// ─────────────────────────────────────────
+‏// RESULTS
+// ─────────────────────────────────────────
+‏function end(){
+‏clearInterval(tInt);
+‏const c=answers.filter(a=>a.ok).length;
+‏const w=answers.filter(a=>!a.ok&&!a.skipped).length;
+‏const s=answers.filter(a=>a.skipped).length;
+‏const tot=answers.length;
+‏const pct=Math.round(c/tot*100);
+‏document.getElementById(‘rName’).textContent=sName.toUpperCase();
+‏const mt=document.getElementById(‘rModeTag’);
+‏if(mode===‘quick’){mt.textContent=‘⚡ QUICK EXAM · 10 SLIDES’;mt.style.cssText=‘color:var(–teal);background:#00d4ff0d;border:1px solid #00d4ff22;’;}
+‏else{mt.textContent=‘🔬 FULL EXAM · 55 SLIDES’;mt.style.cssText=‘color:var(–orange);background:#ff7a300d;border:1px solid #ff7a3022;’;}
+‏document.getElementById(‘rFrac’).textContent=c+’/’+tot;
+‏document.getElementById(‘rPct’).textContent=pct+’%’;
+‏document.getElementById(‘rC’).textContent=c;
+‏document.getElementById(‘rW’).textContent=w;
+‏document.getElementById(‘rS’).textContent=s;
+‏let gr,col;
+‏if(pct>=90){gr=‘EXCELLENT’;col=‘var(–green)’;}
+‏else if(pct>=75){gr=‘GOOD’;col=‘var(–teal)’;}
+‏else if(pct>=60){gr=‘PASS’;col=‘var(–yellow)’;}
+‏else{gr=‘FAIL’;col=‘var(–red)’;}
+‏const gp=document.getElementById(‘gPill’);
+‏gp.textContent=gr;gp.style.cssText=`color:${col};background:${col}15;border:1px solid ${col}44;`;
+‏const arc=document.getElementById(‘srArc’);arc.style.stroke=col;
+‏setTimeout(()=>{arc.style.strokeDashoffset=CIRC_S*(1-pct/100);},80);
+‏document.getElementById(‘aLog’).innerHTML=answers.map((a,i)=>{
+‏const cls=a.skipped?‘ls’:a.ok?‘lc’:‘lw’;
+‏const ul=a.ok?‘✓ ‘+a.user:a.skipped?’— ‘+a.user:‘✗ “’+a.user+’”  →  ‘+a.sl.name;
+‏return `<div class="logitem ${cls}"><div class="lnum">${String(i+1).padStart(2,'0')}</div><div class="linfo"><div class="lcname">${a.sl.name}</div><div class="luser">${ul}</div></div></div>`;
+‏}).join(’’);
+‏show(‘sRes’);
+}
+‏function goHome(){show(‘sHome’);document.getElementById(‘nInput’).value=’’;}
+‏function again(){mode=lastMode;start();}
+
+// ─────────────────────────────────────────
+‏// UTILS
+// ─────────────────────────────────────────
+‏function show(id){
+‏document.querySelectorAll(’.scr’).forEach(s=>s.classList.remove(‘on’));
+‏document.getElementById(id).classList.add(‘on’);
+‏window.scrollTo(0,0);
+}
+‏function toast(msg,type){
+‏const el=document.getElementById(‘toast’);
+‏el.textContent=msg;el.className=’toast on ’+type;
+‏setTimeout(()=>el.classList.remove(‘on’),1400);
+}
+‏document.getElementById(‘aIn’).addEventListener(‘keydown’,e=>{if(e.key===‘Enter’)submit();});
+‏</script>
+
+‏</body>
+‏</html>
